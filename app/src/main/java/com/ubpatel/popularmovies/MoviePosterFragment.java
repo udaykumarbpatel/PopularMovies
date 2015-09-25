@@ -154,14 +154,12 @@ public class MoviePosterFragment extends Fragment {
 
             try {
 
-                //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=5ceb51e2a7d76f24c238deec492884ca
-
                 final String MOVIES_BASE_URL =
                         "http://api.themoviedb.org/3/discover/movie?";
                 final String API_PARAM = "api_key";
                 final String SORT_BY_PARAM = "sort_by";
                 String SORT_BY_VALUE = params[0];
-                final String API_KEY = "5ceb51e2a7d76f24c238deec492884ca";
+                final String API_KEY = "";
 
                 Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon().appendQueryParameter(API_PARAM, API_KEY).appendQueryParameter(SORT_BY_PARAM, SORT_BY_VALUE).build();
 
