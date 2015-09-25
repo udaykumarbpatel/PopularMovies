@@ -1,0 +1,17 @@
+<resources>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+
+    <string-array name="pref_example_list_titles">
+        <item>Most Popular</item>
+        <item>Highest Rated</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>popularity.desc</item>
+        <item>vote_average.desc</item>
+    </string-array>
+
+</resources>
