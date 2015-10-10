@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -36,8 +37,11 @@ import java.util.List;
 public class MoviePosterFragment extends Fragment {
 
     final static String EXTRA_BUNDLE = "PACKAGE";
+    final static String MOVIE_KEY = "MOVIEKEY";
     final String LOG_TAG = "DEBUG TEST  : ";
     GridView gridView;
+    List<Movie> listofMovies;
+    boolean orientation_change = false;
 
     public MoviePosterFragment() {
     }
@@ -50,15 +54,18 @@ public class MoviePosterFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(MOVIE_KEY, (ArrayList<? extends Parcelable>) listofMovies);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.movieposterfragment, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             updateMovies();
@@ -70,6 +77,7 @@ public class MoviePosterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        orientation_change = false;
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         gridView = (GridView) rootView.findViewById(R.id.gridView);
 
@@ -77,6 +85,12 @@ public class MoviePosterFragment extends Fragment {
         int number = getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int columns = (int) ((float) number / scale_factor) / 2;
         gridView.setNumColumns(columns);
+
+        if (savedInstanceState != null) {
+            orientation_change = true;
+            listofMovies = (List<Movie>) savedInstanceState.get(MOVIE_KEY);
+        }
+
         return rootView;
     }
 
@@ -88,6 +102,9 @@ public class MoviePosterFragment extends Fragment {
     }
 
     private void updateMovies() {
+        if (orientation_change) {
+            setImageForAdapter(listofMovies);
+        }
         FetchMovieTask movieTask = new FetchMovieTask();
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -95,16 +112,18 @@ public class MoviePosterFragment extends Fragment {
                 getString(R.string.sort_order),
                 getString(R.string.sort_order_most_popular));
         movieTask.execute(sortType);
+
     }
 
-    private void setImageForAdapter(final List<Movie> result) {
-        gridView.setAdapter(new MovieAdapter(getActivity(), result));
+    private void setImageForAdapter(List<Movie> result) {
+        listofMovies = result;
+        gridView.setAdapter(new MovieAdapter(getActivity(), listofMovies));
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 Intent intent = new Intent(getContext(), MovieDetail.class);
-                intent.putExtra(EXTRA_BUNDLE, result.get(position));
+                intent.putExtra(EXTRA_BUNDLE, listofMovies.get(position));
                 startActivity(intent);
             }
         });
@@ -159,7 +178,7 @@ public class MoviePosterFragment extends Fragment {
                 final String API_PARAM = "api_key";
                 final String SORT_BY_PARAM = "sort_by";
                 String SORT_BY_VALUE = params[0];
-                final String API_KEY = "";
+                final String API_KEY = "5ceb51e2a7d76f24c238deec492884ca";
 
                 Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon().appendQueryParameter(API_PARAM, API_KEY).appendQueryParameter(SORT_BY_PARAM, SORT_BY_VALUE).build();
 
@@ -181,9 +200,6 @@ public class MoviePosterFragment extends Fragment {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
                     buffer.append(line + "\n");
                 }
 
@@ -193,9 +209,7 @@ public class MoviePosterFragment extends Fragment {
                 }
                 forecastJsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
+                Log.e(LOG_TAG, "Error 1", e);
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -216,8 +230,6 @@ public class MoviePosterFragment extends Fragment {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
-
-            // This will only happen if there was an error getting or parsing the forecast.
             return null;
         }
 
