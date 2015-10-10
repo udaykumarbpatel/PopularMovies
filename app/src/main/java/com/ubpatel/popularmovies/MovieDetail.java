@@ -18,6 +18,7 @@ public class MovieDetail extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
 
         Bundle data = getIntent().getExtras();
+
         Movie movie = data.getParcelable(MoviePosterFragment.EXTRA_BUNDLE);
 
         TextView movie_title = (TextView) findViewById(R.id.original_title);
@@ -37,9 +38,14 @@ public class MovieDetail extends AppCompatActivity {
         movie_title.setText(movie.getOriginal_title());
         synopsis.setText(movie.getOverview());
         vote_average.setRating((Float.parseFloat(movie.getUser_rating()) * 5) / 10);
-        String date = movie.getRelease_date();
-        String[] year = date.split("-");
-        release_date.setText(year[0]);
+        if (movie.getRelease_date().equals("null")) {
+            release_date.setText("Not Available");
+        } else {
+            String date = movie.getRelease_date();
+            String[] year = date.split("-");
+            release_date.setText(year[0]);
+        }
+
 
     }
 }
