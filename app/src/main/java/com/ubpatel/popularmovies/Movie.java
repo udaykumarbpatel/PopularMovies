@@ -3,6 +3,8 @@ package com.ubpatel.popularmovies;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 /**
  * Created by ukumar on 8/31/2015.
  */
@@ -16,26 +18,45 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+    String movie_id;
     String original_title;
     String poster_image_url;
     String overview;
     String user_rating;
     String release_date;
+    ArrayList<MovieTrailer> trailer_ids;
 
     public Movie() {
     }
 
-
     public Movie(Parcel in) {
-        String[] data = new String[5];
+        String[] data = new String[6];
 
         in.readStringArray(data);
         this.original_title = data[0];
         this.poster_image_url = data[1];
         this.overview = data[2];
         this.user_rating = data[3];
-        this.release_date = data[4];
 
+        this.release_date = data[4];
+        this.movie_id = data[5];
+
+    }
+
+    public ArrayList<MovieTrailer> getTrailer_ids() {
+        return trailer_ids;
+    }
+
+    public void setTrailer_ids(ArrayList<MovieTrailer> trailer_ids) {
+        this.trailer_ids = trailer_ids;
+    }
+
+    public String getMovie_id() {
+        return movie_id;
+    }
+
+    public void setMovie_id(String movie_id) {
+        this.movie_id = movie_id;
     }
 
     public String getOriginal_title() {
@@ -90,7 +111,8 @@ public class Movie implements Parcelable {
                 this.poster_image_url,
                 this.overview,
                 this.user_rating,
-                this.release_date
+                this.release_date,
+                this.movie_id
         });
     }
 

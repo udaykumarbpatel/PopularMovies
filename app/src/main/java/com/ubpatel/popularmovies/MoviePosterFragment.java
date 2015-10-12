@@ -141,6 +141,8 @@ public class MoviePosterFragment extends Fragment {
             final String OWM_VOTE_AVERAGE = "vote_average";
             final String OWM_RELEASE_DATE = "release_date";
             final String OWM_POSTER_PATH = "poster_path";
+            final String OWM_MOVIE_ID = "id";
+
 
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
             JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
@@ -155,6 +157,7 @@ public class MoviePosterFragment extends Fragment {
                 single_movie.setPoster_image_url(dayForecast.getString(OWM_POSTER_PATH));
                 single_movie.setRelease_date(dayForecast.getString(OWM_RELEASE_DATE));
                 single_movie.setUser_rating(dayForecast.getString(OWM_VOTE_AVERAGE));
+                single_movie.setMovie_id(dayForecast.getString(OWM_MOVIE_ID));
                 all_movies.add(single_movie);
                 //Log.d(LOG_TAG, single_movie.toString());
             }

@@ -4,12 +4,39 @@
     android:layout_height="match_parent"
     tools:context=".MoviePosterFragment">
 
-    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/grid_item_movie_imageview"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:minHeight="2dp"
-        android:src="@drawable/no_image" />
+        android:background="@drawable/myrect"
+        android:elevation="10dp">
+
+        <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/grid_item_movie_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="2dp"
+            android:src="@drawable/no_image" />
+
+        <TextView
+            android:id="@+id/movie_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/grid_item_movie_imageview"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="5dp"
+            android:text="New Text" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/movie_title"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.1" />
+
+    </RelativeLayout>
 
 
 </RelativeLayout>
