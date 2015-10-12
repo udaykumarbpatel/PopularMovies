@@ -121,7 +121,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/trailer_header"
-            android:text="List view is empty"
+            android:text="No Trailers available"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/horizontal_line1"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/listView"
+            android:layout_marginTop="10dp"
+            android:background="#c0c0c0" />
+
+        <TextView
+            android:id="@+id/review_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/horizontal_line1"
+            android:layout_marginTop="5dp"
+            android:text="@string/reviews"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <com.ubpatel.popularmovies.NestedListView
+            android:id="@+id/listView_review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/review_header"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:cacheColorHint="#00000000">
+
+        </com.ubpatel.popularmovies.NestedListView>
+
+        <TextView
+            android:id="@+id/empty_list_view_review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/review_header"
+            android:text="No reviews available!"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="gone" />
 
