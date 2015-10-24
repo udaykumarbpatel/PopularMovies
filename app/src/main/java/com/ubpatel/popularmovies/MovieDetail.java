@@ -49,6 +49,7 @@ public class MovieDetail extends AppCompatActivity {
         RatingBar vote_average = (RatingBar) findViewById(R.id.ratingBar);
         TextView release_date = (TextView) findViewById(R.id.release_date);
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        TextView genre_list = (TextView) findViewById(R.id.genre);
         trailer_list = (ListView) findViewById(R.id.listView);
         review_list = (ListView) findViewById(R.id.listView_review);
 
@@ -59,24 +60,75 @@ public class MovieDetail extends AppCompatActivity {
                 .placeholder(R.drawable.no_image)
                 .into(imageView);
 
+        String[] parts = movie.getMovie_genre().split("\\|");
+        String genre = "";
+        for (int i = 0; i < parts.length; i++) {
+            genre = genre + genreInttoString(Integer.parseInt(parts[i]));
+        }
+        genre_list.setText(genre);
+
         movie_title.setText(movie.getOriginal_title());
         synopsis.setText(movie.getOverview());
         vote_average.setRating((Float.parseFloat(movie.getUser_rating()) * 5) / 10);
         if (movie.getRelease_date().equals("null")) {
             release_date.setText("Not Available");
         } else {
-            String date = movie.getRelease_date();
-            String[] year = date.split("-");
-            release_date.setText(year[0]);
+            release_date.setText(movie.getRelease_date());
         }
 
-        Log.d("Movie ID: ", movie.getMovie_id());
         FetchTrailerTask movieTask = new FetchTrailerTask();
         movieTask.execute(movie.getMovie_id());
 
         FetchReviewTask reviewTask = new FetchReviewTask();
         reviewTask.execute(movie.getMovie_id());
 
+    }
+
+    private String genreInttoString(int genre_id) {
+        switch (genre_id) {
+            case 28:
+                return "Action | ";
+            case 12:
+                return "Adventure | ";
+            case 16:
+                return "Animation | ";
+            case 35:
+                return "Comedy | ";
+            case 80:
+                return "Crime | ";
+            case 99:
+                return "Documentary | ";
+            case 18:
+                return "Drama | ";
+            case 10751:
+                return "Family | ";
+            case 14:
+                return "Fantasy | ";
+            case 10769:
+                return "Foreign | ";
+            case 36:
+                return "History | ";
+            case 27:
+                return "Horror | ";
+            case 10402:
+                return "Music | ";
+            case 9648:
+                return "Mystery | ";
+            case 10749:
+                return "Romance | ";
+            case 878:
+                return "Science Fiction | ";
+            case 10770:
+                return "TV movie | ";
+            case 53:
+                return "Thriller | ";
+            case 10752:
+                return "War | ";
+            case 37:
+                return "Western | ";
+            default:
+                return "";
+        }
     }
 
     private void setTrailerForAdapter(final Movie result) {
@@ -93,22 +145,8 @@ public class MovieDetail extends AppCompatActivity {
     }
 
     private void setMovieReviewForAdapter(final Movie result) {
-
-        for (int i = 0; i < result.getMovie_reviews().size(); i++) {
-            Log.d("Movie.Info : ", movie.getMovie_reviews().get(i).getAuthor());
-        }
-
         review_list.setEmptyView(findViewById(R.id.empty_list_view_review));
         review_list.setAdapter(new ReviewAdapter(getApplicationContext(), result.getMovie_reviews()));
-
-//        review_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + result.getTrailer_ids().get(position).getTrailer_key()));
-//                startActivity(intent);
-//            }
-//        });
-
     }
 
     public class FetchTrailerTask extends AsyncTask<String, Void, Movie> {
@@ -150,8 +188,6 @@ public class MovieDetail extends AppCompatActivity {
 
             try {
 
-                //http://api.themoviedb.org/3/movie/307081/videos?api_key=5ceb51e2a7d76f24c238deec492884ca
-
                 final String MOVIES_BASE_URL =
                         "http://api.themoviedb.org/3/movie/" + params[0] + "/videos?";
                 final String API_PARAM = "api_key";
@@ -161,16 +197,13 @@ public class MovieDetail extends AppCompatActivity {
 
                 URL url = new URL(builtUri.toString());
 
-                // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
 
-                // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
-                    // Nothing to do.
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -181,12 +214,11 @@ public class MovieDetail extends AppCompatActivity {
                 }
 
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
                     return null;
                 }
                 movieJsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error 1", e);
+                Log.e(LOG_TAG, "Error ", e);
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -214,7 +246,6 @@ public class MovieDetail extends AppCompatActivity {
         protected void onPostExecute(Movie result) {
             if (result != null) {
                 setTrailerForAdapter(result);
-                // New data is back from the server.  Hooray!
             }
         }
     }
@@ -257,9 +288,6 @@ public class MovieDetail extends AppCompatActivity {
             String movieJsonStr = null;
 
             try {
-
-                //http://api.themoviedb.org/3/movie/307081/videos?api_key=5ceb51e2a7d76f24c238deec492884ca
-
                 final String MOVIES_BASE_URL =
                         "http://api.themoviedb.org/3/movie/" + params[0] + "/reviews?";
                 final String API_PARAM = "api_key";

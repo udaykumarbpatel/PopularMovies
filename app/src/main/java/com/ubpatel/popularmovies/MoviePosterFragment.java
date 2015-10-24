@@ -142,6 +142,8 @@ public class MoviePosterFragment extends Fragment {
             final String OWM_RELEASE_DATE = "release_date";
             final String OWM_POSTER_PATH = "poster_path";
             final String OWM_MOVIE_ID = "id";
+            final String OWM_MOVIE_GENRE = "genre_ids";
+
 
 
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
@@ -158,8 +160,13 @@ public class MoviePosterFragment extends Fragment {
                 single_movie.setRelease_date(dayForecast.getString(OWM_RELEASE_DATE));
                 single_movie.setUser_rating(dayForecast.getString(OWM_VOTE_AVERAGE));
                 single_movie.setMovie_id(dayForecast.getString(OWM_MOVIE_ID));
+                JSONArray list_genre = dayForecast.getJSONArray(OWM_MOVIE_GENRE);
+                String genres = "";
+                for (int j = 0; j < list_genre.length(); j++) {
+                    genres = genres + list_genre.getInt(j) + "|";
+                }
+                single_movie.setMovie_genre(genres);
                 all_movies.add(single_movie);
-                //Log.d(LOG_TAG, single_movie.toString());
             }
             return all_movies;
         }

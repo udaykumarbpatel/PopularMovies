@@ -26,22 +26,32 @@ public class Movie implements Parcelable {
     String release_date;
     ArrayList<MovieTrailer> trailer_ids;
     ArrayList<MovieReview> movie_reviews;
+    String movie_genre;
 
     public Movie() {
+
     }
 
     public Movie(Parcel in) {
-        String[] data = new String[6];
+        String[] data = new String[7];
 
         in.readStringArray(data);
         this.original_title = data[0];
         this.poster_image_url = data[1];
         this.overview = data[2];
         this.user_rating = data[3];
-
         this.release_date = data[4];
         this.movie_id = data[5];
+        this.movie_genre = data[6];
 
+    }
+
+    public String getMovie_genre() {
+        return movie_genre;
+    }
+
+    public void setMovie_genre(String movie_genre) {
+        this.movie_genre = movie_genre;
     }
 
     public ArrayList<MovieReview> getMovie_reviews() {
@@ -121,7 +131,8 @@ public class Movie implements Parcelable {
                 this.overview,
                 this.user_rating,
                 this.release_date,
-                this.movie_id
+                this.movie_id,
+                this.movie_genre
         });
     }
 

@@ -60,10 +60,6 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
             holder = (ViewHolder) row.getTag();
         }
 
-//        row.measure(View.MeasureSpec.makeMeasureSpec(
-//                        View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED),
-//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-
         Picasso.with(getContext())
                 .load(POSTER_BASE_URL + movies.get(position).getPoster_image_url())
                 .error(R.drawable.no_image)
@@ -74,25 +70,6 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         holder.movie_rating.setRating((Float.parseFloat(movies.get(position).getUser_rating()) * 5) / 10);
         return row;
 
-
-        /*ImageView imageView;
-
-        if (convertView == null) {
-            imageView = new ImageView(getContext());
-            imageView.setAdjustViewBounds(true);
-            imageView.setPadding(0, 0, 0, 0);
-
-        } else {
-            imageView = (ImageView) convertView;
-        }
-
-        Picasso.with(getContext()).cancelRequest(imageView);
-        Picasso.with(getContext())
-                .load(POSTER_BASE_URL + movies.get(position).getPoster_image_url())
-                .error(R.drawable.no_image)
-                .placeholder(R.drawable.no_image)
-                .into(imageView);
-        return imageView;*/
     }
 
     static class ViewHolder {

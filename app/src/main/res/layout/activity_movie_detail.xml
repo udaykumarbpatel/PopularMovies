@@ -66,7 +66,7 @@
 
                 <RatingBar
                     android:id="@+id/ratingBar"
-                    style="?android:attr/ratingBarStyleSmall"
+                    style="?android:attr/ratingBarStyleIndicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/release_date"
@@ -74,6 +74,14 @@
                     android:numStars="5"
                     android:stepSize="0.1" />
 
+                <TextView
+                    android:id="@+id/genre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ratingBar"
+                    android:paddingTop="2dp"
+                    android:text="Genre"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
             </RelativeLayout>
         </LinearLayout>
