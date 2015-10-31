@@ -8,10 +8,12 @@
     <string-array name="pref_example_list_titles">
         <item>Most Popular</item>
         <item>Highest Rated</item>
+        <item>Favorite</item>
     </string-array>
     <string-array name="pref_example_list_values">
         <item>popularity.desc</item>
         <item>vote_average.desc</item>
+        <item>favorite</item>
     </string-array>
 
 </resources>

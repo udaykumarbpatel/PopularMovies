@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,7 +91,6 @@ public class MoviePosterFragment extends Fragment {
             orientation_change = true;
             listofMovies = (List<Movie>) savedInstanceState.get(MOVIE_KEY);
         }
-
         return rootView;
     }
 
@@ -111,8 +111,13 @@ public class MoviePosterFragment extends Fragment {
         String sortType = sharedPrefs.getString(
                 getString(R.string.sort_order),
                 getString(R.string.sort_order_most_popular));
-        movieTask.execute(sortType);
-
+        if (sortType.equals("favorite")) {
+            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Database is Clicked", Toast.LENGTH_LONG);
+            toast.show();
+            movieTask.execute(getString(R.string.sort_order_most_popular));
+        } else {
+            movieTask.execute(sortType);
+        }
     }
 
     private void setImageForAdapter(List<Movie> result) {
@@ -143,8 +148,6 @@ public class MoviePosterFragment extends Fragment {
             final String OWM_POSTER_PATH = "poster_path";
             final String OWM_MOVIE_ID = "id";
             final String OWM_MOVIE_GENRE = "genre_ids";
-
-
 
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
             JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);

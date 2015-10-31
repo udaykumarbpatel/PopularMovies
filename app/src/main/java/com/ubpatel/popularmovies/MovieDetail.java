@@ -12,8 +12,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.ubpatel.popularmovies.data.DataManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,16 +31,19 @@ import java.util.ArrayList;
 
 public class MovieDetail extends AppCompatActivity {
 
+    private static DataManager dm;
     final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w500";
     final String LOG_TAG = "Log Msg : ";
     Movie movie;
     ListView trailer_list;
     ListView review_list;
+    ImageView favorite_icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+        dm = new DataManager(this);
 
         Bundle data = getIntent().getExtras();
 
@@ -52,6 +57,30 @@ public class MovieDetail extends AppCompatActivity {
         TextView genre_list = (TextView) findViewById(R.id.genre);
         trailer_list = (ListView) findViewById(R.id.listView);
         review_list = (ListView) findViewById(R.id.listView_review);
+        favorite_icon = (ImageView) findViewById(R.id.favorite_icon);
+
+        favorite_icon.setImageResource(R.drawable.unfavorite);
+
+        if (dm.getFavorite(movie.getMovie_id())) {
+            Log.e("TEXT", dm.getFavorite(movie.getMovie_id()) + "");
+            favorite_icon.setImageResource(R.drawable.favorite);
+        }
+
+        favorite_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (dm.deleteMovie(movie)) {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Deleted from Favorite", Toast.LENGTH_SHORT);
+                    toast.show();
+                    favorite_icon.setImageResource(R.drawable.unfavorite);
+                } else {
+                    dm.insertMovie(movie);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Added to Favorite", Toast.LENGTH_SHORT);
+                    toast.show();
+                    favorite_icon.setImageResource(R.drawable.favorite);
+                }
+            }
+        });
 
         imageView.setAdjustViewBounds(true);
         Picasso.with(this)
@@ -62,6 +91,7 @@ public class MovieDetail extends AppCompatActivity {
 
         String[] parts = movie.getMovie_genre().split("\\|");
         String genre = "";
+
         for (int i = 0; i < parts.length; i++) {
             genre = genre + genreInttoString(Integer.parseInt(parts[i]));
         }
@@ -147,6 +177,12 @@ public class MovieDetail extends AppCompatActivity {
     private void setMovieReviewForAdapter(final Movie result) {
         review_list.setEmptyView(findViewById(R.id.empty_list_view_review));
         review_list.setAdapter(new ReviewAdapter(getApplicationContext(), result.getMovie_reviews()));
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        dm.close();
     }
 
     public class FetchTrailerTask extends AsyncTask<String, Void, Movie> {
@@ -354,5 +390,4 @@ public class MovieDetail extends AppCompatActivity {
             }
         }
     }
-
 }

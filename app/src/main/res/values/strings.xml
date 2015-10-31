@@ -2,12 +2,14 @@
     <string name="app_name">Popular Movies</string>
     <string name="action_settings">Settings</string>
     <string name="sort_order_label">Sort By</string>
+    <string name="trailers">Trailers: </string>
+    <string name="reviews">Reviews: </string>
+
 
     <!-- Key name for storing location in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="sort_order" translatable="false">sort_order</string>
     <string name="sort_order_most_popular">popularity.desc</string>
-    <string name="trailers">Trailers: </string>
-    <string name="reviews">Reviews: </string>
+
 
     <string name="action_refresh" translatable="false">Refresh</string>
     <string name="title_activity_movie_detail">MovieDetail</string>
