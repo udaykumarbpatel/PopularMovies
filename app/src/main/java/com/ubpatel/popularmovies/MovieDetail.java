@@ -128,12 +128,6 @@ public class MovieDetail extends AppCompatActivity {
             movieTask.execute(movie.getMovie_id());
         }
 
-        if (movie.getTrailer_ids().size() == 0) {
-            View hr_line = findViewById(R.id.horizontal_line1);
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) hr_line.getLayoutParams();
-            params.addRule(RelativeLayout.BELOW, R.id.empty_list_view);
-        }
-
         if (isDatabase.equals("TRUE")) {
             movie.setMovie_reviews(dm.getAllReviews(movie));
             setMovieReviewForAdapter(movie);
@@ -191,6 +185,11 @@ public class MovieDetail extends AppCompatActivity {
     }
 
     private void setTrailerForAdapter(final Movie result) {
+        if (movie.getTrailer_ids().size() == 0) {
+            View hr_line = findViewById(R.id.horizontal_line1);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) hr_line.getLayoutParams();
+            params.addRule(RelativeLayout.BELOW, R.id.empty_list_view);
+        }
         trailer_list.setEmptyView(findViewById(R.id.empty_list_view));
         trailer_list.setAdapter(new TrailerAdapter(getApplicationContext(), result.getTrailer_ids()));
         trailer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
