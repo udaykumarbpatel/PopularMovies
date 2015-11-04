@@ -19,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.ubpatel.popularmovies.data.DataManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,9 +41,11 @@ public class MoviePosterFragment extends Fragment {
 
     final static String EXTRA_BUNDLE = "PACKAGE";
     final static String MOVIE_KEY = "MOVIEKEY";
+    final static String EXTRA_DATABASE = "FALSE";
     final String LOG_TAG = "DEBUG TEST  : ";
     GridView gridView;
     List<Movie> listofMovies;
+    String sortType;
     boolean orientation_change = false;
 
     public MoviePosterFragment() {
@@ -108,20 +112,28 @@ public class MoviePosterFragment extends Fragment {
         FetchMovieTask movieTask = new FetchMovieTask();
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortType = sharedPrefs.getString(
+        sortType = sharedPrefs.getString(
                 getString(R.string.sort_order),
                 getString(R.string.sort_order_most_popular));
         if (sortType.equals("favorite")) {
-            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Database is Clicked", Toast.LENGTH_LONG);
-            toast.show();
-            movieTask.execute(getString(R.string.sort_order_most_popular));
+            getMoviesFromDatabase();
         } else {
             movieTask.execute(sortType);
         }
     }
 
+    private void getMoviesFromDatabase() {
+        DataManager dm = new DataManager(getContext());
+        setImageForAdapter(dm.getAllmovies());
+        dm.close();
+    }
+
     private void setImageForAdapter(List<Movie> result) {
         listofMovies = result;
+        if (listofMovies.size() <= 0) {
+            Toast toast = Toast.makeText(getContext(), "No Movies in the Favorite List", Toast.LENGTH_SHORT);
+            toast.show();
+        }
         gridView.setAdapter(new MovieAdapter(getActivity(), listofMovies));
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -129,6 +141,11 @@ public class MoviePosterFragment extends Fragment {
                                     int position, long id) {
                 Intent intent = new Intent(getContext(), MovieDetail.class);
                 intent.putExtra(EXTRA_BUNDLE, listofMovies.get(position));
+                if (sortType.equals("favorite")) {
+                    intent.putExtra(EXTRA_DATABASE, "TRUE");
+                } else {
+                    intent.putExtra(EXTRA_DATABASE, "FALSE");
+                }
                 startActivity(intent);
             }
         });

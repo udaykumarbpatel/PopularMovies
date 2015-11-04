@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ public class MovieDetail extends AppCompatActivity {
     ListView trailer_list;
     ListView review_list;
     ImageView favorite_icon;
+    boolean fav = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class MovieDetail extends AppCompatActivity {
         Bundle data = getIntent().getExtras();
 
         movie = data.getParcelable(MoviePosterFragment.EXTRA_BUNDLE);
+        String isDatabase = data.getString(MoviePosterFragment.EXTRA_DATABASE);
 
         TextView movie_title = (TextView) findViewById(R.id.original_title);
         TextView synopsis = (TextView) findViewById(R.id.overview);
@@ -58,25 +61,27 @@ public class MovieDetail extends AppCompatActivity {
         trailer_list = (ListView) findViewById(R.id.listView);
         review_list = (ListView) findViewById(R.id.listView_review);
         favorite_icon = (ImageView) findViewById(R.id.favorite_icon);
-
         favorite_icon.setImageResource(R.drawable.unfavorite);
 
         if (dm.getFavorite(movie.getMovie_id())) {
-            Log.e("TEXT", dm.getFavorite(movie.getMovie_id()) + "");
+            fav = true;
             favorite_icon.setImageResource(R.drawable.favorite);
         }
 
         favorite_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dm.deleteMovie(movie)) {
+                if (fav) {
+                    dm.deleteMovie(movie);
                     Toast toast = Toast.makeText(getApplicationContext(), "Deleted from Favorite", Toast.LENGTH_SHORT);
                     toast.show();
+                    fav = false;
                     favorite_icon.setImageResource(R.drawable.unfavorite);
                 } else {
                     dm.insertMovie(movie);
                     Toast toast = Toast.makeText(getApplicationContext(), "Added to Favorite", Toast.LENGTH_SHORT);
                     toast.show();
+                    fav = true;
                     favorite_icon.setImageResource(R.drawable.favorite);
                 }
             }
@@ -89,16 +94,24 @@ public class MovieDetail extends AppCompatActivity {
                 .placeholder(R.drawable.no_image)
                 .into(imageView);
 
-        String[] parts = movie.getMovie_genre().split("\\|");
-        String genre = "";
-
-        for (int i = 0; i < parts.length; i++) {
-            genre = genre + genreInttoString(Integer.parseInt(parts[i]));
+        if (movie.getMovie_genre().length() > 1) {
+            String[] parts = movie.getMovie_genre().split("\\|");
+            String genre = "";
+            for (int i = 0; i < parts.length; i++) {
+                genre = genre + genreInttoString(Integer.parseInt(parts[i]));
+            }
+            genre_list.setText(genre);
+        } else {
+            genre_list.setText("Genre not available");
         }
-        genre_list.setText(genre);
+
 
         movie_title.setText(movie.getOriginal_title());
-        synopsis.setText(movie.getOverview());
+        if (movie.getOverview().equals("null")) {
+            synopsis.setText("Overview Not Available");
+        } else {
+            synopsis.setText(movie.getOverview());
+        }
         vote_average.setRating((Float.parseFloat(movie.getUser_rating()) * 5) / 10);
         if (movie.getRelease_date().equals("null")) {
             release_date.setText("Not Available");
@@ -106,12 +119,28 @@ public class MovieDetail extends AppCompatActivity {
             release_date.setText(movie.getRelease_date());
         }
 
-        FetchTrailerTask movieTask = new FetchTrailerTask();
-        movieTask.execute(movie.getMovie_id());
 
-        FetchReviewTask reviewTask = new FetchReviewTask();
-        reviewTask.execute(movie.getMovie_id());
+        if (isDatabase.equals("TRUE")) {
+            movie.setTrailer_ids(dm.getAllTrailers(movie));
+            setTrailerForAdapter(movie);
+        } else {
+            FetchTrailerTask movieTask = new FetchTrailerTask();
+            movieTask.execute(movie.getMovie_id());
+        }
 
+        if (movie.getTrailer_ids().size() == 0) {
+            View hr_line = findViewById(R.id.horizontal_line1);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) hr_line.getLayoutParams();
+            params.addRule(RelativeLayout.BELOW, R.id.empty_list_view);
+        }
+
+        if (isDatabase.equals("TRUE")) {
+            movie.setMovie_reviews(dm.getAllReviews(movie));
+            setMovieReviewForAdapter(movie);
+        } else {
+            FetchReviewTask reviewTask = new FetchReviewTask();
+            reviewTask.execute(movie.getMovie_id());
+        }
     }
 
     private String genreInttoString(int genre_id) {

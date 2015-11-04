@@ -3,7 +3,6 @@ package com.ubpatel.popularmovies.data;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.ubpatel.popularmovies.Movie;
 
@@ -48,12 +47,11 @@ public class MovieDBAccess {
     public List<Movie> getAll() {
         List<Movie> all_movies = new ArrayList<>();
         Cursor c = db.query(true, MovieContract.MovieEntry.TABLE_NAME, null, null, null, null, null, null, null);
-        if (c != null) {
+        if (c.getCount() > 0) {
             c.moveToFirst();
             do {
                 Movie movie = this.buildMovieFromCursor(c);
                 if (movie != null) {
-                    Log.e("TEXT", movie.getOriginal_title());
                     all_movies.add(movie);
                 }
             } while (c.moveToNext());

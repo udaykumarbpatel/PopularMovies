@@ -4,6 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.ubpatel.popularmovies.Movie;
+import com.ubpatel.popularmovies.MovieReview;
+import com.ubpatel.popularmovies.MovieTrailer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataManager {
     Context mContext;
@@ -31,11 +36,25 @@ public class DataManager {
     }
 
     public boolean deleteMovie(Movie movie) {
-        return movieTrailerDAO.delete(movie.getMovie_id()) && movieReviewDAO.delete(movie.getMovie_id()) && movieDAO.delete(movie.getMovie_id());
+        movieTrailerDAO.delete(movie.getMovie_id());
+        movieReviewDAO.delete(movie.getMovie_id());
+        return movieDAO.delete(movie.getMovie_id());
     }
 
     public boolean getFavorite(String movie_id) {
         return movieDAO.get(movie_id);
+    }
+
+    public List<Movie> getAllmovies() {
+        return movieDAO.getAll();
+    }
+
+    public ArrayList<MovieReview> getAllReviews(Movie movie) {
+        return movieReviewDAO.getAll(movie);
+    }
+
+    public ArrayList<MovieTrailer> getAllTrailers(Movie movie) {
+        return movieTrailerDAO.getAll(movie);
     }
 
 }

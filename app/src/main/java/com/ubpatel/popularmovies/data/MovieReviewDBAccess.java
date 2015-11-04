@@ -8,7 +8,6 @@ import com.ubpatel.popularmovies.Movie;
 import com.ubpatel.popularmovies.MovieReview;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MovieReviewDBAccess {
 
@@ -36,10 +35,10 @@ public class MovieReviewDBAccess {
         return db.delete(MovieContract.MovieReviewEntry.TABLE_NAME, MovieContract.MovieReviewEntry.COLUMN_MOVIE_ID + "=" + movie_id, null) > 0;
     }
 
-    public List<MovieReview> getAll(Movie movie) {
-        List<MovieReview> all_reviews = new ArrayList<>();
+    public ArrayList<MovieReview> getAll(Movie movie) {
+        ArrayList<MovieReview> all_reviews = new ArrayList<>();
         Cursor c = db.query(true, MovieContract.MovieReviewEntry.TABLE_NAME, null, MovieContract.MovieReviewEntry.COLUMN_MOVIE_ID + "=" + movie.getMovie_id(), null, null, null, null, null);
-        if (c != null) {
+        if (c.getCount() > 0) {
             c.moveToFirst();
             do {
                 MovieReview movieReview = this.buildMovieFromCursor(c);
