@@ -45,9 +45,7 @@ public class MovieDetailFragment extends Fragment {
     View rootView;
 
     public MovieDetailFragment() {
-        // Required empty public constructor
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

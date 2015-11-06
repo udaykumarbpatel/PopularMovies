@@ -34,9 +34,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MoviePosterFragment extends Fragment {
 
     final static String EXTRA_BUNDLE = "PACKAGE";
@@ -239,7 +236,7 @@ public class MoviePosterFragment extends Fragment {
                 }
                 forecastJsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error 1", e);
+                Log.e(LOG_TAG, "Error : No Data to Stream", e);
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -267,7 +264,6 @@ public class MoviePosterFragment extends Fragment {
         protected void onPostExecute(ArrayList<Movie> result) {
             if (result != null) {
                 setImageForAdapter(result);
-                // New data is back from the server.  Hooray!
             }
         }
     }
