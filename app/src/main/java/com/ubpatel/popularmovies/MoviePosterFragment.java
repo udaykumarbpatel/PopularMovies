@@ -83,11 +83,6 @@ public class MoviePosterFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         gridView = (GridView) rootView.findViewById(R.id.gridView);
 
-        float scale_factor = getResources().getDisplayMetrics().density * 100;
-        int number = getActivity().getWindowManager().getDefaultDisplay().getWidth();
-        int columns = (int) ((float) number / scale_factor) / 2;
-        gridView.setNumColumns(columns);
-
         if (savedInstanceState != null) {
             orientation_change = true;
             listofMovies = (List<Movie>) savedInstanceState.get(MOVIE_KEY);

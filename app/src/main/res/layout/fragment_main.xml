@@ -11,6 +11,7 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:horizontalSpacing="10dp"
+        android:numColumns="auto_fit"
         android:scrollingCache="true"
         android:stretchMode="columnWidth"
         android:verticalSpacing="10dp" />

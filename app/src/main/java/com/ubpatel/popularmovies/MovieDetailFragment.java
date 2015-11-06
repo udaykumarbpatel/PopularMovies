@@ -61,91 +61,96 @@ public class MovieDetailFragment extends Fragment {
 
         Bundle data = getActivity().getIntent().getExtras();
 
-        movie = data.getParcelable(MoviePosterFragment.EXTRA_BUNDLE);
-        String isDatabase = data.getString(MoviePosterFragment.EXTRA_DATABASE);
+        if (data == null) {
+            Toast toast = Toast.makeText(getContext(), "No Data Received", Toast.LENGTH_SHORT);
+            toast.show();
+        } else {
+            movie = data.getParcelable(MoviePosterFragment.EXTRA_BUNDLE);
+            String isDatabase = data.getString(MoviePosterFragment.EXTRA_DATABASE);
 
-        TextView movie_title = (TextView) rootView.findViewById(R.id.original_title);
-        TextView synopsis = (TextView) rootView.findViewById(R.id.overview);
-        RatingBar vote_average = (RatingBar) rootView.findViewById(R.id.ratingBar);
-        TextView release_date = (TextView) rootView.findViewById(R.id.release_date);
-        ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
-        TextView genre_list = (TextView) rootView.findViewById(R.id.genre);
-        trailer_list = (ListView) rootView.findViewById(R.id.listView);
-        review_list = (ListView) rootView.findViewById(R.id.listView_review);
-        favorite_icon = (ImageView) rootView.findViewById(R.id.favorite_icon);
-        favorite_icon.setImageResource(R.drawable.unfavorite);
+            TextView movie_title = (TextView) rootView.findViewById(R.id.original_title);
+            TextView synopsis = (TextView) rootView.findViewById(R.id.overview);
+            RatingBar vote_average = (RatingBar) rootView.findViewById(R.id.ratingBar);
+            TextView release_date = (TextView) rootView.findViewById(R.id.release_date);
+            ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
+            TextView genre_list = (TextView) rootView.findViewById(R.id.genre);
+            trailer_list = (ListView) rootView.findViewById(R.id.listView);
+            review_list = (ListView) rootView.findViewById(R.id.listView_review);
+            favorite_icon = (ImageView) rootView.findViewById(R.id.favorite_icon);
+            favorite_icon.setImageResource(R.drawable.unfavorite);
 
-        if (dm.getFavorite(movie.getMovie_id())) {
-            fav = true;
-            favorite_icon.setImageResource(R.drawable.favorite);
-        }
+            if (dm.getFavorite(movie.getMovie_id())) {
+                fav = true;
+                favorite_icon.setImageResource(R.drawable.favorite);
+            }
 
-        favorite_icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (fav) {
-                    dm.deleteMovie(movie);
-                    Toast toast = Toast.makeText(getContext(), "Deleted from Favorite", Toast.LENGTH_SHORT);
-                    toast.show();
-                    fav = false;
-                    favorite_icon.setImageResource(R.drawable.unfavorite);
-                } else {
-                    dm.insertMovie(movie);
-                    Toast toast = Toast.makeText(getContext(), "Added to Favorite", Toast.LENGTH_SHORT);
-                    toast.show();
-                    fav = true;
-                    favorite_icon.setImageResource(R.drawable.favorite);
+            favorite_icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (fav) {
+                        dm.deleteMovie(movie);
+                        Toast toast = Toast.makeText(getContext(), "Deleted from Favorite", Toast.LENGTH_SHORT);
+                        toast.show();
+                        fav = false;
+                        favorite_icon.setImageResource(R.drawable.unfavorite);
+                    } else {
+                        dm.insertMovie(movie);
+                        Toast toast = Toast.makeText(getContext(), "Added to Favorite", Toast.LENGTH_SHORT);
+                        toast.show();
+                        fav = true;
+                        favorite_icon.setImageResource(R.drawable.favorite);
+                    }
                 }
+            });
+
+            imageView.setAdjustViewBounds(true);
+            Picasso.with(getContext())
+                    .load(POSTER_BASE_URL + movie.getPoster_image_url())
+                    .error(R.drawable.no_image)
+                    .placeholder(R.drawable.no_image)
+                    .into(imageView);
+
+            if (movie.getMovie_genre().length() > 1) {
+                String[] parts = movie.getMovie_genre().split("\\|");
+                String genre = "";
+                for (int i = 0; i < parts.length; i++) {
+                    genre = genre + genreInttoString(Integer.parseInt(parts[i]));
+                }
+                genre_list.setText(genre);
+            } else {
+                genre_list.setText("Genre not available");
             }
-        });
 
-        imageView.setAdjustViewBounds(true);
-        Picasso.with(getContext())
-                .load(POSTER_BASE_URL + movie.getPoster_image_url())
-                .error(R.drawable.no_image)
-                .placeholder(R.drawable.no_image)
-                .into(imageView);
 
-        if (movie.getMovie_genre().length() > 1) {
-            String[] parts = movie.getMovie_genre().split("\\|");
-            String genre = "";
-            for (int i = 0; i < parts.length; i++) {
-                genre = genre + genreInttoString(Integer.parseInt(parts[i]));
+            movie_title.setText(movie.getOriginal_title());
+            if (movie.getOverview().equals("null")) {
+                synopsis.setText("Overview Not Available");
+            } else {
+                synopsis.setText(movie.getOverview());
             }
-            genre_list.setText(genre);
-        } else {
-            genre_list.setText("Genre not available");
-        }
+            vote_average.setRating((Float.parseFloat(movie.getUser_rating()) * 5) / 10);
+            if (movie.getRelease_date().equals("null")) {
+                release_date.setText("Not Available");
+            } else {
+                release_date.setText(movie.getRelease_date());
+            }
 
 
-        movie_title.setText(movie.getOriginal_title());
-        if (movie.getOverview().equals("null")) {
-            synopsis.setText("Overview Not Available");
-        } else {
-            synopsis.setText(movie.getOverview());
-        }
-        vote_average.setRating((Float.parseFloat(movie.getUser_rating()) * 5) / 10);
-        if (movie.getRelease_date().equals("null")) {
-            release_date.setText("Not Available");
-        } else {
-            release_date.setText(movie.getRelease_date());
-        }
+            if (isDatabase.equals("TRUE")) {
+                movie.setTrailer_ids(dm.getAllTrailers(movie));
+                setTrailerForAdapter(movie);
+            } else {
+                FetchTrailerTask movieTask = new FetchTrailerTask();
+                movieTask.execute(movie.getMovie_id());
+            }
 
-
-        if (isDatabase.equals("TRUE")) {
-            movie.setTrailer_ids(dm.getAllTrailers(movie));
-            setTrailerForAdapter(movie);
-        } else {
-            FetchTrailerTask movieTask = new FetchTrailerTask();
-            movieTask.execute(movie.getMovie_id());
-        }
-
-        if (isDatabase.equals("TRUE")) {
-            movie.setMovie_reviews(dm.getAllReviews(movie));
-            setMovieReviewForAdapter(movie);
-        } else {
-            FetchReviewTask reviewTask = new FetchReviewTask();
-            reviewTask.execute(movie.getMovie_id());
+            if (isDatabase.equals("TRUE")) {
+                movie.setMovie_reviews(dm.getAllReviews(movie));
+                setMovieReviewForAdapter(movie);
+            } else {
+                FetchReviewTask reviewTask = new FetchReviewTask();
+                reviewTask.execute(movie.getMovie_id());
+            }
         }
         return rootView;
     }
