@@ -44,6 +44,7 @@ public class MoviePosterFragment extends Fragment {
     GridView gridView;
     List<Movie> listofMovies;
     String sortType;
+    String isDatabase;
     boolean orientation_change = false;
     Toast t;
 
@@ -121,6 +122,11 @@ public class MoviePosterFragment extends Fragment {
                 getString(R.string.sort_order),
                 getString(R.string.sort_order_most_popular));
         if (sortType.equals("favorite")) {
+            isDatabase = "TRUE";
+        } else {
+            isDatabase = "FALSE";
+        }
+        if (sortType.equals("favorite")) {
             getMoviesFromDatabase();
         } else {
             movieTask.execute(sortType);
@@ -148,12 +154,6 @@ public class MoviePosterFragment extends Fragment {
         }
         gridView.setAdapter(new MovieAdapter(getActivity(), listofMovies));
 
-        final String isDatabase;
-        if (sortType.equals("favorite")) {
-            isDatabase = "TRUE";
-        } else {
-            isDatabase = "FALSE";
-        }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,

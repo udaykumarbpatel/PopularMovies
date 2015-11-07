@@ -35,10 +35,10 @@ import java.util.ArrayList;
 
 public class MovieDetailFragment extends Fragment {
 
-    static Movie movie;
     private static DataManager dm;
     final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w500";
     final String LOG_TAG = "Log Msg : ";
+    Movie movie;
     String isDatabase;
     ListView trailer_list;
     ListView review_list;
@@ -76,7 +76,7 @@ public class MovieDetailFragment extends Fragment {
             lin_no_movie.setVisibility(View.INVISIBLE);
             RelativeLayout movie_content = (RelativeLayout) rootView.findViewById(R.id.relative_layout);
             movie_content.setVisibility(View.VISIBLE);
-            MovieDetailFragment.movie = movie;
+            this.movie = movie;
             this.isDatabase = isDatabase;
 
             TextView movie_title = (TextView) rootView.findViewById(R.id.original_title);
@@ -100,7 +100,7 @@ public class MovieDetailFragment extends Fragment {
             favorite_icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final Movie movie_obj = movie;
+                    Movie movie_obj = movie;
                     dm = new DataManager(getActivity());
                     if (fav) {
                         dm.deleteMovie(movie_obj);
