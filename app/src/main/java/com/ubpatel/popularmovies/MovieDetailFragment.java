@@ -45,6 +45,7 @@ public class MovieDetailFragment extends Fragment {
     ImageView favorite_icon;
     boolean fav = false;
     View rootView;
+    Toast t;
 
     public MovieDetailFragment() {
     }
@@ -103,14 +104,12 @@ public class MovieDetailFragment extends Fragment {
                     dm = new DataManager(getActivity());
                     if (fav) {
                         dm.deleteMovie(movie_obj);
-                        Toast toast = Toast.makeText(getContext(), "Deleted from Favorite", Toast.LENGTH_SHORT);
-                        toast.show();
+                        showToast(getString(R.string.fav_delete));
                         fav = false;
                         favorite_icon.setImageResource(R.drawable.unfavorite);
                     } else {
                         dm.insertMovie(movie_obj);
-                        Toast toast = Toast.makeText(getContext(), "Added to Favorite", Toast.LENGTH_SHORT);
-                        toast.show();
+                        showToast(getString(R.string.fav_add));
                         fav = true;
                         favorite_icon.setImageResource(R.drawable.favorite);
                     }
@@ -173,6 +172,14 @@ public class MovieDetailFragment extends Fragment {
             RelativeLayout movie_content = (RelativeLayout) rootView.findViewById(R.id.relative_layout);
             movie_content.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void showToast(String text) {
+        if (t != null) {
+            t.cancel();
+        }
+        t = Toast.makeText(getActivity(), text, Toast.LENGTH_LONG);
+        t.show();
     }
 
     private String genreInttoString(int genre_id) {

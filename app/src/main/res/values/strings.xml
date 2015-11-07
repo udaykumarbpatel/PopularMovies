@@ -17,4 +17,9 @@
     <string name="no_genre">No Genre Available.</string>
     <string name="no_overview">No Overview Available!</string>
     <string name="no_date">No Release Date Available!</string>
+    <string name="fav_delete">Deleted from Favorite</string>
+    <string name="fav_add">Added from Favorite</string>
+    <string name="no_fav_movie">No Movies in the Favorite List</string>
+
+
 </resources>

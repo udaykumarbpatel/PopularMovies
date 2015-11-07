@@ -45,6 +45,7 @@ public class MoviePosterFragment extends Fragment {
     List<Movie> listofMovies;
     String sortType;
     boolean orientation_change = false;
+    Toast t;
 
     public MoviePosterFragment() {
     }
@@ -132,11 +133,18 @@ public class MoviePosterFragment extends Fragment {
         dm.close();
     }
 
+    private void showToast(String text) {
+        if (t != null) {
+            t.cancel();
+        }
+        t = Toast.makeText(getActivity(), text, Toast.LENGTH_LONG);
+        t.show();
+    }
+
     private void setImageForAdapter(List<Movie> result) {
         listofMovies = result;
         if (listofMovies.size() <= 0) {
-            Toast toast = Toast.makeText(getContext(), "No Movies in the Favorite List", Toast.LENGTH_SHORT);
-            toast.show();
+            showToast(getString(R.string.no_fav_movie));
         }
         gridView.setAdapter(new MovieAdapter(getActivity(), listofMovies));
 
