@@ -225,7 +225,7 @@ public class MoviePosterFragment extends Fragment {
                 final String API_PARAM = "api_key";
                 final String SORT_BY_PARAM = "sort_by";
                 String SORT_BY_VALUE = params[0];
-                final String API_KEY = "5ceb51e2a7d76f24c238deec492884ca";
+                final String API_KEY = "";
 
                 Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon().appendQueryParameter(API_PARAM, API_KEY).appendQueryParameter(SORT_BY_PARAM, SORT_BY_VALUE).build();
 
