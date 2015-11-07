@@ -6,9 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MoviePosterFragment.CallBack {
 
 
+    final static String EXTRA_BUNDLE = "PACKAGE";
+    final static String EXTRA_DATABASE = "FALSE";
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private static boolean mTwoPane = false;
 
@@ -47,9 +49,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        MoviePosterFragment ff = (MoviePosterFragment) getSupportFragmentManager().findFragmentById(R.id.container);
-        ff.onStart();
+    public void onItemSelected(Movie movie, String isDatabase) {
+        MovieDetailFragment detail_frag = (MovieDetailFragment) getSupportFragmentManager().findFragmentById(R.id.container_detail);
+
+        if (detail_frag != null) {
+            detail_frag.receiveData(movie, isDatabase);
+        } else {
+            Intent intent = new Intent(getApplication(), MovieDetail.class);
+            intent.putExtra(EXTRA_BUNDLE, movie);
+            intent.putExtra(EXTRA_DATABASE, isDatabase);
+            startActivity(intent);
+        }
     }
 }

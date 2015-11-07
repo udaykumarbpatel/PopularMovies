@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -34,10 +35,11 @@ import java.util.ArrayList;
 
 public class MovieDetailFragment extends Fragment {
 
+    static Movie movie;
     private static DataManager dm;
     final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w500";
     final String LOG_TAG = "Log Msg : ";
-    Movie movie;
+    String isDatabase;
     ListView trailer_list;
     ListView review_list;
     ImageView favorite_icon;
@@ -57,16 +59,24 @@ public class MovieDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
-        dm = new DataManager(getActivity());
-
-        Bundle data = getActivity().getIntent().getExtras();
-
-        if (data == null) {
-            Toast toast = Toast.makeText(getContext(), "No Data Received", Toast.LENGTH_SHORT);
-            toast.show();
-        } else {
+        if (getActivity().getIntent().getExtras() != null) {
+            Bundle data = getActivity().getIntent().getExtras();
             movie = data.getParcelable(MoviePosterFragment.EXTRA_BUNDLE);
-            String isDatabase = data.getString(MoviePosterFragment.EXTRA_DATABASE);
+            isDatabase = data.getString(MoviePosterFragment.EXTRA_DATABASE);
+            receiveData(movie, isDatabase);
+        }
+        return rootView;
+    }
+
+    public void receiveData(final Movie movie, String isDatabase) {
+
+        if (movie != null) {
+            LinearLayout lin_no_movie = (LinearLayout) rootView.findViewById(R.id.linear_layout);
+            lin_no_movie.setVisibility(View.INVISIBLE);
+            RelativeLayout movie_content = (RelativeLayout) rootView.findViewById(R.id.relative_layout);
+            movie_content.setVisibility(View.VISIBLE);
+            MovieDetailFragment.movie = movie;
+            this.isDatabase = isDatabase;
 
             TextView movie_title = (TextView) rootView.findViewById(R.id.original_title);
             TextView synopsis = (TextView) rootView.findViewById(R.id.overview);
@@ -79,27 +89,32 @@ public class MovieDetailFragment extends Fragment {
             favorite_icon = (ImageView) rootView.findViewById(R.id.favorite_icon);
             favorite_icon.setImageResource(R.drawable.unfavorite);
 
+            dm = new DataManager(getActivity());
             if (dm.getFavorite(movie.getMovie_id())) {
                 fav = true;
                 favorite_icon.setImageResource(R.drawable.favorite);
+            } else {
+                fav = false;
             }
-
             favorite_icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final Movie movie_obj = movie;
+                    dm = new DataManager(getActivity());
                     if (fav) {
-                        dm.deleteMovie(movie);
+                        dm.deleteMovie(movie_obj);
                         Toast toast = Toast.makeText(getContext(), "Deleted from Favorite", Toast.LENGTH_SHORT);
                         toast.show();
                         fav = false;
                         favorite_icon.setImageResource(R.drawable.unfavorite);
                     } else {
-                        dm.insertMovie(movie);
+                        dm.insertMovie(movie_obj);
                         Toast toast = Toast.makeText(getContext(), "Added to Favorite", Toast.LENGTH_SHORT);
                         toast.show();
                         fav = true;
                         favorite_icon.setImageResource(R.drawable.favorite);
                     }
+                    dm.close();
                 }
             });
 
@@ -118,19 +133,19 @@ public class MovieDetailFragment extends Fragment {
                 }
                 genre_list.setText(genre);
             } else {
-                genre_list.setText("Genre not available");
+                genre_list.setText(getText(R.string.no_genre));
             }
 
 
             movie_title.setText(movie.getOriginal_title());
             if (movie.getOverview().equals("null")) {
-                synopsis.setText("Overview Not Available");
+                synopsis.setText(getText(R.string.no_overview));
             } else {
                 synopsis.setText(movie.getOverview());
             }
             vote_average.setRating((Float.parseFloat(movie.getUser_rating()) * 5) / 10);
             if (movie.getRelease_date().equals("null")) {
-                release_date.setText("Not Available");
+                release_date.setText(getText(R.string.no_date));
             } else {
                 release_date.setText(movie.getRelease_date());
             }
@@ -151,8 +166,13 @@ public class MovieDetailFragment extends Fragment {
                 FetchReviewTask reviewTask = new FetchReviewTask();
                 reviewTask.execute(movie.getMovie_id());
             }
+            dm.close();
+        } else {
+            LinearLayout lin_no_movie = (LinearLayout) rootView.findViewById(R.id.linear_layout);
+            lin_no_movie.setVisibility(View.VISIBLE);
+            RelativeLayout movie_content = (RelativeLayout) rootView.findViewById(R.id.relative_layout);
+            movie_content.setVisibility(View.INVISIBLE);
         }
-        return rootView;
     }
 
     private String genreInttoString(int genre_id) {

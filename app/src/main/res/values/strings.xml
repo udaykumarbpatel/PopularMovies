@@ -13,4 +13,8 @@
 
     <string name="action_refresh" translatable="false">Refresh</string>
     <string name="title_activity_movie_detail">MovieDetail</string>
+    <string name="no_movie">No Movie is selected!!!</string>
+    <string name="no_genre">No Genre Available.</string>
+    <string name="no_overview">No Overview Available!</string>
+    <string name="no_date">No Release Date Available!</string>
 </resources>

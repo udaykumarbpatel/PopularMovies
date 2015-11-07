@@ -1,6 +1,6 @@
 package com.ubpatel.popularmovies;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -40,6 +40,7 @@ public class MoviePosterFragment extends Fragment {
     final static String MOVIE_KEY = "MOVIEKEY";
     final static String EXTRA_DATABASE = "FALSE";
     final String LOG_TAG = "DEBUG TEST  : ";
+    CallBack mCallBack;
     GridView gridView;
     List<Movie> listofMovies;
     String sortType;
@@ -90,6 +91,17 @@ public class MoviePosterFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mCallBack = (CallBack) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement CallBack");
+        }
+
+    }
 
     @Override
     public void onStart() {
@@ -128,19 +140,24 @@ public class MoviePosterFragment extends Fragment {
         }
         gridView.setAdapter(new MovieAdapter(getActivity(), listofMovies));
 
+        final String isDatabase;
+        if (sortType.equals("favorite")) {
+            isDatabase = "TRUE";
+        } else {
+            isDatabase = "FALSE";
+        }
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Intent intent = new Intent(getContext(), MovieDetail.class);
-                intent.putExtra(EXTRA_BUNDLE, listofMovies.get(position));
-                if (sortType.equals("favorite")) {
-                    intent.putExtra(EXTRA_DATABASE, "TRUE");
-                } else {
-                    intent.putExtra(EXTRA_DATABASE, "FALSE");
-                }
-                startActivity(intent);
+                String isData = isDatabase;
+                mCallBack.onItemSelected(listofMovies.get(position), isData);
             }
         });
+    }
+
+    public interface CallBack {
+        void onItemSelected(Movie movie, String isDatabase);
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
